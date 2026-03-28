@@ -6,7 +6,14 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
   <div>
     <h1 class="h3 mb-1">Quality Report</h1>
-    <p class="text-body-secondary mb-0">Flagged files include low bitrate, metadata issues, or ffprobe errors.</p>
+    <div class="text-body-secondary mb-0">
+      <p class="mb-0">Flagged files include:</p>
+      <ul>
+        <li>Low bitrate</li>
+        <li>Metadata issues</li>
+        <li>ffprobe errors</li>
+      </ul>
+    </div>
   </div>
   <div class="d-flex gap-2">
     <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
@@ -27,7 +34,7 @@
 
 <div class="row g-3 mb-4">
   <div class="col-md-3">
-    <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Videos scanned</div><div class="h2 mb-0">{{ ns.total }}</div></div></div>
+    <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Videos scanned</div><div class="h2 mb-0 text-success">{{ ns.total }}</div></div></div>
   </div>
   <div class="col-md-3">
     <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Low quality</div><div class="h2 mb-0 text-warning">{{ ns.low }}</div></div></div>

@@ -3,7 +3,7 @@
   --rc-bg-alt: #101b27;
   --rc-card: #182432;
   --rc-border: #26374a;
-  --rc-text: #e5edf4;
+  --rc-text: #f0f4f8;
   --rc-muted: #9db0c1;
   --rc-accent: #f4b942;
 }
@@ -54,6 +54,11 @@ body {
 .form-check-input {
   background-color: #0d1824;
   border-color: #35506c;
+  color: var(--rc-text);
+}
+
+.form-label,
+.form-check-label {
   color: var(--rc-text);
 }
 

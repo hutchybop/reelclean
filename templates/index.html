@@ -7,7 +7,12 @@
   <div class="row g-4 align-items-center">
     <div class="col-lg-8">
       <h1 class="display-5 mb-2 hero-title">Your Movie Library, Clean and Ready</h1>
-      <p class="lead mb-0 text-body-secondary">Pick a configured directory, preview every rename, then approve exactly what gets changed.</p>
+      <ul class="lead mb-0 text-body-secondary">
+        <li>Pick a configured directory</li>
+        <li>Preview every rename</li>
+        <li>Approve exactly what gets changed</li>
+      </ul>
+      <!-- <p class="lead mb-0 text-body-secondary">Pick a configured directory, preview every rename, then approve exactly what gets changed.</p> -->
     </div>
     <div class="col-lg-4 text-lg-end">
       <span class="badge text-bg-dark me-2">Flask</span>
@@ -40,12 +45,12 @@
         <label class="form-label">Mode</label>
         <div class="vstack gap-2">
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="mode" id="mode_rename_only" value="rename_only" checked>
-            <label class="form-check-label" for="mode_rename_only">Rename only</label>
+            <input class="form-check-input" type="radio" name="mode" id="mode_rename_and_quality" value="rename_and_quality" checked>
+            <label class="form-check-label" for="mode_rename_and_quality">Rename and quality check</label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="mode" id="mode_rename_and_quality" value="rename_and_quality">
-            <label class="form-check-label" for="mode_rename_and_quality">Rename and quality check</label>
+            <input class="form-check-input" type="radio" name="mode" id="mode_rename_only" value="rename_only">
+            <label class="form-check-label" for="mode_rename_only">Rename only</label>
           </div>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="mode" id="mode_quality_only" value="quality_only">

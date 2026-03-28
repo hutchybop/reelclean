@@ -1,3 +1,7 @@
+# Add user installed packages here with: pip3 list --not-required --format=freeze > requirements.txt
+# Before this Run: pip3 install --upgrade pip setuptools wheel
+# Install with: pip3 install -r requirements.txt
+
 Flask>=3.0,<4.0
 gunicorn>=22.0,<23.0
 python-dotenv>=1.0,<2.0

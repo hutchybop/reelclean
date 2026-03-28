@@ -109,7 +109,13 @@ def parse_allowed_dirs(raw: str | None) -> list[DirectoryOption]:
             path_value = entry
             label = Path(path_value.strip()).name or path_value.strip()
 
-        path = Path(path_value.strip()).expanduser()
+        path_value = path_value.strip()
+        if not path_value.startswith(("~", "/")):
+            if path_value.startswith("Users/") or path_value.startswith("users/"):
+                path_value = "/" + path_value
+            else:
+                path_value = os.path.join(os.path.expanduser("~"), path_value)
+        path = Path(path_value)
         options.append(DirectoryOption(label=label, path=path))
 
     return options
