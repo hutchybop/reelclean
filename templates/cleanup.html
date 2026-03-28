@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}ReelClean - Cleanup{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Cleanup Review</h1>
+    <p class="text-body-secondary mb-0">Check or uncheck files and folders before deletion.</p>
+  </div>
+  <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
+</div>
+
+{% if job.rename_result %}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <h2 class="h5 mb-3">Rename Stage Result</h2>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Successful Operations</div>
+          <div class="h3 mb-0">{{ job.rename_result.successful_operations }}</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Failed Operations</div>
+          <div class="h3 mb-0">{{ job.rename_result.failed_operations }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-4">
+    <h2 class="h5 mb-3">Deletion Candidates ({{ job.cleanup_candidates|length }})</h2>
+
+    {% if job.cleanup_candidates %}
+    <form method="post" action="{{ url_for('run_cleanup', job_id=job.job_id) }}">
+      <div class="mb-3 d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-sm btn-outline-light" id="check-all-btn">Check all</button>
+        <button type="button" class="btn btn-sm btn-outline-light" id="uncheck-all-btn">Uncheck all</button>
+      </div>
+
+      <div class="table-responsive mb-3">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th class="checkbox-column"></th>
+              <th>Relative Path</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for candidate in job.cleanup_candidates %}
+            <tr>
+              <td>
+                <input class="form-check-input cleanup-check" type="checkbox" name="candidate_ids" value="{{ candidate.candidate_id }}" {% if candidate.selected %}checked{% endif %}>
+              </td>
+              <td><code>{{ candidate.relative_path }}</code></td>
+              <td><span class="badge text-bg-secondary">{{ candidate.kind.value }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <button type="submit" class="btn btn-warning">Apply Selected Cleanup</button>
+      <p class="small text-body-secondary mt-2 mb-0">Submitting with no checked items skips deletion and continues the workflow.</p>
+    </form>
+    {% else %}
+    <form method="post" action="{{ url_for('run_cleanup', job_id=job.job_id) }}">
+      <div class="alert alert-info mb-3">No cleanup candidates found.</div>
+      <button type="submit" class="btn btn-warning">Continue</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cleanup.css') }}">
+{% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/cleanup.js') }}"></script>
+{% endblock %}

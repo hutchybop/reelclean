@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}ReelClean - Quality Report{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Quality Report</h1>
+    <p class="text-body-secondary mb-0">Flagged files include low bitrate, metadata issues, or ffprobe errors.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
+    <a class="btn btn-outline-light" href="{{ url_for('index') }}">Home</a>
+  </div>
+</div>
+
+{% set ns = namespace(total=job.quality_results|length, low=0, metadata=0, errors=0) %}
+{% for item in job.quality_results %}
+  {% if item.error %}
+    {% set ns.errors = ns.errors + 1 %}
+  {% elif item.metadata_issues %}
+    {% set ns.metadata = ns.metadata + 1 %}
+  {% elif item.low_quality_reasons %}
+    {% set ns.low = ns.low + 1 %}
+  {% endif %}
+{% endfor %}
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Videos scanned</div><div class="h2 mb-0">{{ ns.total }}</div></div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Low quality</div><div class="h2 mb-0 text-warning">{{ ns.low }}</div></div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Metadata issues</div><div class="h2 mb-0 text-info">{{ ns.metadata }}</div></div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">Probe errors</div><div class="h2 mb-0 text-danger">{{ ns.errors }}</div></div></div>
+  </div>
+</div>
+
+{% if job.quality_results %}
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Tier</th>
+          <th>Resolution</th>
+          <th>Bitrate</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in job.quality_results %}
+        <tr>
+          <td class="text-break"><code>{{ item.path }}</code></td>
+          <td>{{ item.tier }}</td>
+          <td>
+            {% if item.width and item.height %}
+              {{ item.width }}x{{ item.height }}
+            {% else %}
+              <span class="text-body-secondary">unknown</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if item.bitrate_kbps %}
+              {{ item.bitrate_kbps }} kbps
+            {% else %}
+              <span class="text-body-secondary">unknown</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if item.error %}
+              <span class="badge text-bg-danger">{{ item.error }}</span>
+            {% elif item.metadata_issues %}
+              {% for issue in item.metadata_issues %}
+              <div class="small text-info">{{ issue }}</div>
+              {% endfor %}
+            {% elif item.low_quality_reasons %}
+              {% for reason in item.low_quality_reasons %}
+              <div class="small text-warning">{{ reason }}</div>
+              {% endfor %}
+            {% else %}
+              <span class="badge text-bg-success">ok</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">No quality results are available for this job.</div>
+{% endif %}
+
+{% if job.includes_renaming %}
+<div class="mt-4">
+  <a class="btn btn-outline-light" href="{{ url_for('results_page', job_id=job.job_id) }}">View Rename/Cleanup Results</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,89 @@
+:root {
+  --rc-bg: #0b1118;
+  --rc-bg-alt: #101b27;
+  --rc-card: #182432;
+  --rc-border: #26374a;
+  --rc-text: #e5edf4;
+  --rc-muted: #9db0c1;
+  --rc-accent: #f4b942;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 0%, #1a2c40 0%, var(--rc-bg) 45%, #060a10 100%);
+  color: var(--rc-text);
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+}
+
+.reel-nav {
+  background: linear-gradient(90deg, #0a121b 0%, #111f2c 55%, #0f1924 100%);
+}
+
+.brand-mark {
+  font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+  letter-spacing: 0.05em;
+  font-size: 1.9rem;
+  color: var(--rc-accent);
+}
+
+.brand-mark:hover {
+  color: #ffd87e;
+}
+
+.hero-card,
+.card {
+  background: linear-gradient(170deg, rgba(24, 36, 50, 0.92), rgba(15, 27, 39, 0.92));
+  border: 1px solid var(--rc-border);
+}
+
+.hero-title {
+  font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--rc-text);
+  --bs-table-striped-color: var(--rc-text);
+  --bs-table-hover-color: var(--rc-text);
+  --bs-table-border-color: var(--rc-border);
+}
+
+.form-control,
+.form-select,
+.form-check-input {
+  background-color: #0d1824;
+  border-color: #35506c;
+  color: var(--rc-text);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--rc-accent);
+  box-shadow: 0 0 0 0.25rem rgba(244, 185, 66, 0.2);
+}
+
+.form-control::placeholder {
+  color: var(--rc-muted);
+}
+
+.text-body-secondary,
+.small {
+  color: var(--rc-muted) !important;
+}
+
+.btn-warning {
+  color: #2f2207;
+  font-weight: 700;
+}
+
+.list-group-item {
+  border-color: var(--rc-border);
+}
+
+@media (max-width: 768px) {
+  .display-5 {
+    font-size: 2.2rem;
+  }
+}

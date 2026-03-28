@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}ReelClean - Dry Run{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Dry Run Review</h1>
+    <p class="text-body-secondary mb-0">Decide each movie rename: accept, skip, or retry with a new search term.</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
+    <a class="btn btn-outline-light" href="{{ url_for('index') }}">Home</a>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="text-body-secondary small">Accepted</div>
+        <div class="display-6 fw-semibold">{{ job.accepted_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="text-body-secondary small">Skipped</div>
+        <div class="display-6 fw-semibold">{{ job.skipped_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="text-body-secondary small">Movies Found</div>
+        <div class="display-6 fw-semibold">{{ job.proposals|length }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body d-flex flex-wrap gap-2">
+    <form method="post" action="{{ url_for('accept_all', job_id=job.job_id) }}">
+      <button type="submit" class="btn btn-outline-warning">Accept All Ready</button>
+    </form>
+    <form method="post" action="{{ url_for('run_renames', job_id=job.job_id) }}">
+      <button type="submit" class="btn btn-warning" {% if job.accepted_count == 0 %}disabled{% endif %}>Run Accepted Renames</button>
+    </form>
+  </div>
+</div>
+
+{% if job.proposals %}
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Movie File</th>
+          <th>Proposal</th>
+          <th>Status</th>
+          <th>Decision</th>
+          <th class="actions-column">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proposal in job.proposals %}
+        {% set movie = job.movies_by_id.get(proposal.movie_id) %}
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ movie.movie_filename if movie else proposal.source_movie_path.name }}</div>
+            <div class="small text-body-secondary">Guess: {{ proposal.guessed_title or 'N/A' }}</div>
+          </td>
+          <td>
+            {% if proposal.target_name %}
+            <div>{{ proposal.target_name }}</div>
+            <div class="small text-body-secondary text-break">{{ proposal.target_movie_path }}</div>
+            {% else %}
+            <span class="text-body-secondary">No match yet</span>
+            {% endif %}
+            {% if proposal.conflict_reason %}
+            <div class="small text-danger mt-1">{{ proposal.conflict_reason }}</div>
+            {% endif %}
+          </td>
+          <td>
+            {% if proposal.status.value == 'ready' %}
+            <span class="badge text-bg-success">ready</span>
+            {% elif proposal.status.value == 'conflict' %}
+            <span class="badge text-bg-danger">conflict</span>
+            {% elif proposal.status.value == 'needs_review' %}
+            <span class="badge text-bg-warning">needs review</span>
+            {% else %}
+            <span class="badge text-bg-secondary">{{ proposal.status.value }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if proposal.decision.value == 'accept' %}
+            <span class="badge text-bg-success">accept</span>
+            {% elif proposal.decision.value == 'skip' %}
+            <span class="badge text-bg-secondary">skip</span>
+            {% else %}
+            <span class="badge text-bg-light">pending</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex gap-2">
+                <form method="post" action="{{ url_for('set_movie_decision', job_id=job.job_id, movie_id=proposal.movie_id) }}">
+                  <input type="hidden" name="decision" value="accept">
+                  <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                </form>
+                <form method="post" action="{{ url_for('set_movie_decision', job_id=job.job_id, movie_id=proposal.movie_id) }}">
+                  <input type="hidden" name="decision" value="skip">
+                  <button type="submit" class="btn btn-sm btn-outline-secondary">Skip</button>
+                </form>
+              </div>
+              <form method="post" action="{{ url_for('retry_movie', job_id=job.job_id, movie_id=proposal.movie_id) }}" class="d-flex gap-2">
+                <input type="text" name="search_term" class="form-control form-control-sm" placeholder="New TMDB search term" required>
+                <button type="submit" class="btn btn-sm btn-outline-info">Retry</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">No movie files were found in this directory.</div>
+{% endif %}
+{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dry_run.css') }}">
+{% endblock %}

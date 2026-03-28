@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}ReelClean - Results{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Job Results</h1>
+    <p class="text-body-secondary mb-0">Final output for renaming and cleanup operations.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
+    <a class="btn btn-outline-light" href="{{ url_for('index') }}">Home</a>
+  </div>
+</div>
+
+{% if job.rename_result %}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <h2 class="h5 mb-3">Rename Operations</h2>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Successful</div>
+          <div class="h3 mb-0">{{ job.rename_result.successful_operations }}</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Failed</div>
+          <div class="h3 mb-0">{{ job.rename_result.failed_operations }}</div>
+        </div>
+      </div>
+    </div>
+
+    {% set rename_failed = job.rename_result.rename_operations | selectattr('status', 'equalto', 'failed') | list %}
+    {% if rename_failed %}
+    <h3 class="h6 mt-4">Rename Failures</h3>
+    <ul class="list-group list-group-flush">
+      {% for item in rename_failed %}
+      <li class="list-group-item px-0 bg-transparent">
+        <div class="small text-body-secondary">{{ item.kind }}</div>
+        <div><code>{{ item.source }}</code></div>
+        <div class="text-danger small">{{ item.message }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if job.cleanup_result %}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <h2 class="h5 mb-3">Cleanup Operations</h2>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Successful</div>
+          <div class="h3 mb-0">{{ job.cleanup_result.successful_operations }}</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Failed</div>
+          <div class="h3 mb-0">{{ job.cleanup_result.failed_operations }}</div>
+        </div>
+      </div>
+    </div>
+
+    {% set cleanup_failed = job.cleanup_result.cleanup_operations | selectattr('status', 'equalto', 'failed') | list %}
+    {% if cleanup_failed %}
+    <h3 class="h6 mt-4">Cleanup Failures</h3>
+    <ul class="list-group list-group-flush">
+      {% for item in cleanup_failed %}
+      <li class="list-group-item px-0 bg-transparent">
+        <div><code>{{ item.source }}</code></div>
+        <div class="text-danger small">{{ item.message }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if not job.rename_result and not job.cleanup_result %}
+<div class="alert alert-info">No execution output is available for this job yet.</div>
+{% endif %}
+{% endblock %}

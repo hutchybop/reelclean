@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}ReelClean - Job {{ job.job_id }}{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <h1 class="h3 mb-0">Job <code>{{ job.job_id }}</code></h1>
+      <span class="badge text-bg-secondary">{{ job.status }}</span>
+    </div>
+
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Mode</dt>
+      <dd class="col-sm-9">{{ mode_labels.get(job.mode, job.mode) }}</dd>
+
+      <dt class="col-sm-3">Directory</dt>
+      <dd class="col-sm-9"><code>{{ job.root_dir }}</code></dd>
+
+      <dt class="col-sm-3">Created</dt>
+      <dd class="col-sm-9">{{ job.created_at }}</dd>
+    </dl>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2">
+  {% if job.includes_renaming %}
+  <a class="btn btn-warning" href="{{ url_for('dry_run_page', job_id=job.job_id) }}">Open Dry Run</a>
+  <a class="btn btn-outline-light" href="{{ url_for('cleanup_page', job_id=job.job_id) }}">Open Cleanup</a>
+  {% endif %}
+
+  {% if job.includes_quality %}
+  <a class="btn btn-outline-info" href="{{ url_for('quality_page', job_id=job.job_id) }}">Open Quality</a>
+  {% endif %}
+
+  <a class="btn btn-outline-light" href="{{ url_for('results_page', job_id=job.job_id) }}">Open Results</a>
+</div>
+{% endblock %}

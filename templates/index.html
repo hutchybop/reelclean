@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}ReelClean - Start Job{% endblock %}
+
+{% block content %}
+<section class="hero-card rounded-4 p-4 p-lg-5 mb-4">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-8">
+      <h1 class="display-5 mb-2 hero-title">Your Movie Library, Clean and Ready</h1>
+      <p class="lead mb-0 text-body-secondary">Pick a configured directory, preview every rename, then approve exactly what gets changed.</p>
+    </div>
+    <div class="col-lg-4 text-lg-end">
+      <span class="badge text-bg-dark me-2">Flask</span>
+      <span class="badge text-bg-warning">Bootstrap 5</span>
+    </div>
+  </div>
+</section>
+
+{% if not configured_tmdb %}
+<div class="alert alert-warning" role="alert">
+  TMDB is not configured. Set <code>TMDB_API_KEY</code> for rename matching.
+</div>
+{% endif %}
+
+{% if allowed_dirs %}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <h2 class="h4 mb-3">Create Job</h2>
+    <form method="post" action="{{ url_for('create_job_route') }}" class="row g-3">
+      <div class="col-12">
+        <label for="directory" class="form-label">Library Directory</label>
+        <select id="directory" name="directory" class="form-select" required>
+          {% for label, value, path in allowed_dirs %}
+          <option value="{{ value }}">{{ label }} - {{ path }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Mode</label>
+        <div class="vstack gap-2">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="mode" id="mode_rename_only" value="rename_only" checked>
+            <label class="form-check-label" for="mode_rename_only">Rename only</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="mode" id="mode_rename_and_quality" value="rename_and_quality">
+            <label class="form-check-label" for="mode_rename_and_quality">Rename and quality check</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="mode" id="mode_quality_only" value="quality_only">
+            <label class="form-check-label" for="mode_quality_only">Quality check only</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <button class="btn btn-warning btn-lg" type="submit">Start Job</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+  No directories configured. Add <code>REELCLEAN_ALLOWED_DIRS</code> in your environment.
+</div>
+{% endif %}
+
+{% if jobs %}
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-4">
+    <h2 class="h5 mb-3">Recent Jobs</h2>
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Job</th>
+            <th>Mode</th>
+            <th>Status</th>
+            <th>Directory</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in jobs %}
+          <tr>
+            <td><code>{{ job.job_id }}</code></td>
+            <td>{{ mode_labels.get(job.mode, job.mode) }}</td>
+            <td><span class="badge text-bg-secondary">{{ job.status }}</span></td>
+            <td>{{ job.root_dir }}</td>
+            <td class="text-end"><a href="{{ url_for('job_overview', job_id=job.job_id) }}" class="btn btn-sm btn-outline-light">Open</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
