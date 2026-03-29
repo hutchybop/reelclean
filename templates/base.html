@@ -24,7 +24,10 @@
     <nav class="navbar navbar-expand-lg border-bottom border-warning-subtle reel-nav">
       <div class="container">
         <div class="reel-nav-head d-flex flex-column flex-md-row w-100 align-items-start align-items-md-center">
-          <a class="navbar-brand brand-mark mb-0" href="{{ url_for('index') }}">ReelClean</a>
+          <a class="navbar-brand brand-mark d-inline-flex align-items-center gap-2 mb-0" href="{{ url_for('index') }}">
+            <img class="brand-logo" src="{{ url_for('static', filename='favicons/reelclean.png') }}" alt="ReelClean logo" width="34" height="34">
+            <span>ReelClean</span>
+          </a>
           <div class="brand-mark nav-title-mark ms-md-auto text-md-end">{% block nav_title %}ReelClean{% endblock %}</div>
         </div>
       </div>
