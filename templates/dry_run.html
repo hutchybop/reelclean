@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}ReelClean - Dry Run{% endblock %}
+{% block nav_title %}Dry Run{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -10,7 +11,6 @@
   </div>
   <div class="d-flex flex-wrap gap-2">
     <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
-    <a class="btn btn-outline-light" href="{{ url_for('index') }}">Home</a>
   </div>
 </div>
 
@@ -54,9 +54,11 @@
     <form id="accept-all-form" method="post" action="{{ url_for('accept_all', job_id=job.job_id) }}">
       <button id="accept-all-btn" type="submit" class="btn btn-outline-warning">Accept All</button>
     </form>
-    <form method="post" action="{{ url_for('run_renames', job_id=job.job_id) }}">
-      <button id="run-renames-btn" type="submit" class="btn btn-warning" {% if job.accepted_count == 0 %}disabled{% endif %}>Run Accepted Renames</button>
+    {% if job.accepted_count > 0 %}
+    <form class="ms-auto" method="post" action="{{ url_for('run_renames', job_id=job.job_id) }}">
+      <button id="run-renames-btn" type="submit" class="btn btn-warning">Run Accepted Renames</button>
     </form>
+    {% endif %}
   </div>
 </div>
 

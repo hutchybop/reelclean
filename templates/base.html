@@ -23,7 +23,10 @@
   <body>
     <nav class="navbar navbar-expand-lg border-bottom border-warning-subtle reel-nav">
       <div class="container">
-        <a class="navbar-brand brand-mark" href="{{ url_for('index') }}">ReelClean</a>
+        <div class="reel-nav-head d-flex flex-column flex-md-row w-100 align-items-start align-items-md-center">
+          <a class="navbar-brand brand-mark mb-0" href="{{ url_for('index') }}">ReelClean</a>
+          <div class="brand-mark nav-title-mark ms-md-auto text-md-end">{% block nav_title %}ReelClean{% endblock %}</div>
+        </div>
       </div>
     </nav>
 
@@ -32,7 +35,10 @@
         {% if messages %}
           <div class="mb-4">
             {% for category, message in messages %}
-              <div class="alert alert-{{ category }} mb-2" role="alert">{{ message }}</div>
+              <div class="alert alert-{{ category }} alert-dismissible fade show mb-2" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
             {% endfor %}
           </div>
         {% endif %}

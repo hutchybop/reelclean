@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}ReelClean - Quality Report{% endblock %}
+{% block nav_title %}Quality Report{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -17,7 +18,6 @@
   </div>
   <div class="d-flex gap-2">
     <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
-    <a class="btn btn-outline-light" href="{{ url_for('index') }}">Home</a>
   </div>
 </div>
 
@@ -50,20 +50,32 @@
 {% if job.quality_results %}
 <div class="card border-0 shadow-sm">
   <div class="table-responsive">
-    <table class="table align-middle mb-0">
+    <table class="table align-middle mb-0 quality-table">
       <thead>
         <tr>
-          <th>File</th>
-          <th>Tier</th>
-          <th>Resolution</th>
-          <th>Bitrate</th>
-          <th>Notes</th>
+          <th id="th-quality-file">File</th>
+          <th id="th-quality-tier">Tier</th>
+          <th id="th-quality-resolution">Resolution</th>
+          <th id="th-quality-bitrate">Bitrate</th>
+          <th id="th-quality-notes">Notes</th>
         </tr>
       </thead>
       <tbody>
         {% for item in job.quality_results %}
         <tr>
-          <td class="text-break"><code>{{ item.path }}</code></td>
+          <td class="text-break quality-file-cell">
+            {% set full_path = item.path|string %}
+            {% set normalized_path = full_path.replace('\\', '/') %}
+            {% set path_parts = normalized_path.rsplit('/', 1) %}
+            {% if path_parts|length > 1 %}
+              {% set filename = path_parts[1] %}
+            {% else %}
+              {% set filename = normalized_path %}
+            {% endif %}
+            {% set title_parts = filename.rsplit('.', 1) %}
+            <div><code class="fw-semibold">{{ title_parts[0] }}</code></div>
+            <div class="small text-body-secondary">{{ normalized_path }}</div>
+          </td>
           <td>{{ item.tier }}</td>
           <td>
             {% if item.width and item.height %}
@@ -79,7 +91,7 @@
               <span class="text-body-secondary">unknown</span>
             {% endif %}
           </td>
-          <td>
+          <td class="quality-notes-cell">
             {% if item.error %}
               <span class="badge text-bg-danger">{{ item.error }}</span>
             {% elif item.metadata_issues %}
@@ -106,7 +118,11 @@
 
 {% if job.includes_renaming %}
 <div class="mt-4">
-  <a class="btn btn-outline-light" href="{{ url_for('results_page', job_id=job.job_id) }}">View Rename/Cleanup Results</a>
+  <a class="btn btn-outline-light" href="{{ url_for('results_page', job_id=job.job_id) }}">View Job Results</a>
 </div>
 {% endif %}
+{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quality.css') }}">
 {% endblock %}

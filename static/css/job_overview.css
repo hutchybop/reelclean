@@ -1,0 +1,6 @@
+.card-body {
+    color: var(--rc-muted);
+}
+.card-body strong {
+    color: var(--rc-text);
+}

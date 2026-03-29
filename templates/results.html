@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}ReelClean - Results{% endblock %}
+{% block nav_title %}Results{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -10,14 +11,15 @@
   </div>
   <div class="d-flex gap-2">
     <a class="btn btn-outline-light" href="{{ url_for('job_overview', job_id=job.job_id) }}">Job</a>
-    <a class="btn btn-outline-light" href="{{ url_for('index') }}">Home</a>
+    <a class="btn btn-outline-info" href="{{ url_for('index') }}">Home</a>
   </div>
 </div>
 
 {% if job.rename_result %}
 <div class="card border-0 shadow-sm mb-4">
   <div class="card-body p-4">
-    <h2 class="h5 mb-3">Rename Operations</h2>
+    <h2 class="h5 mb-1 text-warning">Name Changes</h2>
+    <p class="small text-body-secondary mb-3">Rename results at a glance.</p>
     <div class="row g-3">
       <div class="col-md-6">
         <div class="p-3 rounded-3 bg-body-tertiary">
@@ -38,7 +40,6 @@
       <table class="table align-middle mb-0">
         <thead>
           <tr>
-            <th>Operation</th>
             <th>Source</th>
             <th>Target</th>
             <th>Status</th>
@@ -47,7 +48,6 @@
         <tbody>
           {% for item in job.rename_result.rename_operations %}
           <tr>
-            <td>{{ item.kind }}</td>
             <td class="text-break"><code>{{ item.source }}</code></td>
             <td class="text-break"><code>{{ item.target }}</code></td>
             <td>
@@ -86,7 +86,8 @@
 {% if job.cleanup_result %}
 <div class="card border-0 shadow-sm mb-4">
   <div class="card-body p-4">
-    <h2 class="h5 mb-3">Cleanup Operations</h2>
+    <h2 class="h5 mb-1 text-warning">Clean Sweep</h2>
+    <p class="small text-body-secondary mb-3">Deletion outcomes from cleanup.</p>
     <div class="row g-3">
       <div class="col-md-6">
         <div class="p-3 rounded-3 bg-body-tertiary">
@@ -149,7 +150,54 @@
 </div>
 {% endif %}
 
-{% if not job.rename_result and not job.cleanup_result %}
+{% if job.quality_results %}
+{% set quality = namespace(total=job.quality_results|length, low=0, metadata=0, errors=0, ok=0) %}
+{% for item in job.quality_results %}
+  {% if item.error %}
+    {% set quality.errors = quality.errors + 1 %}
+  {% elif item.metadata_issues %}
+    {% set quality.metadata = quality.metadata + 1 %}
+  {% elif item.low_quality_reasons %}
+    {% set quality.low = quality.low + 1 %}
+  {% else %}
+    {% set quality.ok = quality.ok + 1 %}
+  {% endif %}
+{% endfor %}
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <h2 class="h5 mb-1 text-warning">Quality Pulse</h2>
+    <p class="small text-body-secondary mb-3">Scan summary for this job.</p>
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Videos scanned</div>
+          <div class="h3 mb-0">{{ quality.total }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Low quality</div>
+          <div class="h3 mb-0 text-warning">{{ quality.low }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Metadata issues</div>
+          <div class="h3 mb-0 text-info">{{ quality.metadata }}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="p-3 rounded-3 bg-body-tertiary">
+          <div class="small text-body-secondary">Probe errors</div>
+          <div class="h3 mb-0 text-danger">{{ quality.errors }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if not job.rename_result and not job.cleanup_result and not job.quality_results %}
 <div class="alert alert-info">No execution output is available for this job yet.</div>
 {% endif %}
 {% endblock %}

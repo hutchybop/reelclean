@@ -30,6 +30,14 @@ body {
   color: #ffd87e;
 }
 
+.reel-nav-head {
+  gap: 0.35rem;
+}
+
+.nav-title-mark {
+  line-height: 1;
+}
+
 .hero-card,
 .card {
   background: linear-gradient(170deg, rgba(24, 36, 50, 0.92), rgba(15, 27, 39, 0.92));

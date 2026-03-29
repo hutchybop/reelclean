@@ -1,0 +1,19 @@
+.quality-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+#th-quality-file {
+  width: 50%;
+}
+
+.quality-file-cell {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+#th-quality-notes,
+.quality-notes-cell {
+  width: 1%;
+  white-space: nowrap;
+}
