@@ -1,4 +1,4 @@
-# ReelClean Development Log
+# ReelClean Development Log 
 
 ## Session 4 
 ### Sunday March 29th
