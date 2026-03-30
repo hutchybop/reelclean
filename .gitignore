@@ -27,3 +27,4 @@ venv/
 .vscode/
 .idea/
 rename_env/
+ship/

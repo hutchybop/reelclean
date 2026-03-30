@@ -36,3 +36,4 @@ venv/
 .venv/
 .envrc
 rename_env/
+ship/
